@@ -1,0 +1,40 @@
+name: Conventional commits
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  check-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check PR title
+        uses: webiny/action-conventional-commits@v1.3.1
+
+      - name: Check commit messages
+        uses: wagoid/commitlint-github-action@v6
+
+      - name: Send failure email
+        if: failure()
+        run: |
+          npm install @sendgrid/mail
+          node .github/scripts/send-fail-email.js
+        env:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+
+      - name: Close PR on failure
+        if: failure()
+        run: |
+          gh pr close ${{ github.event.pull_request.number }} --comment 'Closed: commit messages do not follow Conventional Commits.'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
