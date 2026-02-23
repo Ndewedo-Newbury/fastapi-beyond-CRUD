@@ -32,9 +32,7 @@ jobs:
       - name: Send failure email
         if: failure()
         run: |
-          npm install nodemailer
+          npm install @sendgrid/mail
           node .github/scripts/send-nightly-fail-email.js
         env:
-          ETHEREAL_USER: ${{ secrets.ETHEREAL_USER }}
-          ETHEREAL_PASS: ${{ secrets.ETHEREAL_PASS }}
-          NOTIFY_EMAIL:  ${{ secrets.NOTIFY_EMAIL }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}

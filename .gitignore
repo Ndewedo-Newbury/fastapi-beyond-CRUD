@@ -162,4 +162,5 @@ sample.py
 .vscode
 node_modules
 .ruff_cache
-.hypothesis
+.hypothesissendgrid.env
+sendgrid.env

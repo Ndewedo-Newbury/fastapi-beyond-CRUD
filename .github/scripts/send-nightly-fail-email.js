@@ -1,30 +1,26 @@
-const nodemailer = require("nodemailer");
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.ethereal.email",
-  port: 587,
-  auth: {
-    user: process.env.ETHEREAL_USER,
-    pass: process.env.ETHEREAL_PASS,
-  },
-});
+const msg = {
+  to: 'freddywitateddy@gmail.com',
+  from: 'nfnewbury@dons.usfca.edu',
+  subject: `[NIGHTLY FAIL] Build/tests failed on ${process.env.GITHUB_REF}`,
+  text: [
+    `Commit: ${process.env.GITHUB_SHA}`,
+    `Actor:  ${process.env.GITHUB_ACTOR}`,
+    `Repo:   ${process.env.GITHUB_REPOSITORY}`,
+    "",
+    "The nightly build or test suite has failed.",
+    `See the run at: https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+  ].join("\n"),
+};
 
-async function main() {
-  const info = await transporter.sendMail({
-    from: process.env.ETHEREAL_USER,
-    to: process.env.NOTIFY_EMAIL,
-    subject: `[NIGHTLY FAIL] Build/tests failed on ${process.env.GITHUB_REF}`,
-    text: [
-      `Commit: ${process.env.GITHUB_SHA}`,
-      `Actor:  ${process.env.GITHUB_ACTOR}`,
-      `Repo:   ${process.env.GITHUB_REPOSITORY}`,
-      "",
-      "The nightly build or test suite has failed.",
-      `See the run at: https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
-    ].join("\n"),
+sgMail
+  .send(msg)
+  .then(() => {
+    console.log('Email sent');
+  })
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
   });
-
-  console.log("Message sent. Preview URL:", nodemailer.getTestMessageUrl(info));
-}
-
-main().catch((err) => { console.error(err); process.exit(1); });
