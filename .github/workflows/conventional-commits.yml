@@ -14,9 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Check conventional commits
+      - name: Check PR title
         uses: webiny/action-conventional-commits@v1.3.1
+
+      - name: Check commit messages
+        uses: wagoid/commitlint-github-action@v6
 
       - name: Send failure email
         if: failure()
