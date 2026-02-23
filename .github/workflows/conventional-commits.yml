@@ -30,7 +30,8 @@ jobs:
 
       - name: Close PR on failure
         if: failure()
-        run: gh pr close ${{ github.event.pull_request.number }} --comment "Closed: commit messages do not follow Conventional Commits."
+        run: |
+          gh pr close ${{ github.event.pull_request.number }} --comment 'Closed: commit messages do not follow Conventional Commits.'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
