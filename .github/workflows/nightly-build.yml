@@ -22,7 +22,18 @@ jobs:
 
       - name: Run tests inside container
         run: |
-          docker run --rm ${{ secrets.DOCKERHUB_USERNAME }}/fastapi-app:nightly \
+          docker run --rm \
+            -e DATABASE_URL=postgresql://dummy:dummy@localhost/dummy \
+            -e JWT_SECRET=dummy_secret \
+            -e JWT_ALGORITHM=HS256 \
+            -e MAIL_USERNAME=dummy \
+            -e MAIL_PASSWORD=dummy \
+            -e MAIL_FROM=dummy@dummy.com \
+            -e MAIL_PORT=587 \
+            -e MAIL_SERVER=dummy \
+            -e MAIL_FROM_NAME=dummy \
+            -e DOMAIN=localhost \
+            ${{ secrets.DOCKERHUB_USERNAME }}/fastapi-app:nightly \
             sh -c "pip install pytest pytest-asyncio anyio[asyncio] --quiet && pytest src/tests/ -v"
 
       - name: Push to Docker Hub
