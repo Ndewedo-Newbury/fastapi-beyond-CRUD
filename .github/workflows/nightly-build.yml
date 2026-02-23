@@ -23,7 +23,7 @@ jobs:
       - name: Run tests inside container
         run: |
           docker run --rm \
-            -e DATABASE_URL=postgresql://dummy:dummy@localhost/dummy \
+            -e DATABASE_URL=postgresql+asyncpg://dummy:dummy@localhost/dummy \
             -e JWT_SECRET=dummy_secret \
             -e JWT_ALGORITHM=HS256 \
             -e MAIL_USERNAME=dummy \
